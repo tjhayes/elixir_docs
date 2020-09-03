@@ -1,37 +1,42 @@
+# Required Software
+
+    Unix (needed for ASDF. E.G. WSL on Windows)
+    ASDF (will install Nodejs, Erlang and Elixir with this)
+
 # Initial Setup
 
-mix new \<appname\> --umbrella \
-cd \<appname\>/apps \
-mix phx.new \<appname\> \
-mix phx.new.web \<appname_web\> \
-cd .. \
-git init \
-git commit -am "initial commit"
+    mix new \<appname\> --umbrella \
+    cd \<appname\>/apps \
+    mix phx.new \<appname\> \
+    mix phx.new.web \<appname_web\> \
+    cd .. \
+    git init \
+    git commit -am "initial commit"
 
 
 
 # Set Tool Versions with ASDF
 
-https://alchemist.camp/episodes/asdf-language-versions \
-cd \<appname\>
+    https://alchemist.camp/episodes/asdf-language-versions \
+    cd \<appname\>
 
-asdf current \
-asdf plugin-add elixir -- add a new language \
-asdf list -- list all installed languages \
-asdf list-all elixir -- list all available  versions of a languages \
-asdf install elixir \<version\> \
-asdf global elixir \<version\>
+    asdf current \
+    asdf plugin-add elixir -- add a new language \
+    asdf list -- list all installed languages \
+    asdf list-all elixir -- list all available  versions of a languages \
+    asdf install elixir \<version\> \
+    asdf global elixir \<version\>
 
-asdf install nodejs \<version\> \
-asdf install erlang \<version\> \
-asdf install elixir \<version\>
+    asdf install nodejs \<version\> \
+    asdf install erlang \<version\> \
+    asdf install elixir \<version\>
 
-bash \~/.asdf/plugins/nodejs/bin/import-release-team-keyring \
-asdf local nodejs 14.9.0 \
-export KERL_CONFIGURE_OPTIONS="--disable-debug --without-javac" \
-asdf local erlang 23.0.2 \
-asdf local elixir 1.10.4-otp-23 \
-(elixir and erlang versions must match: 23 in this case)
+    bash \~/.asdf/plugins/nodejs/bin/import-release-team-keyring \
+    asdf local nodejs 14.9.0 \
+    export KERL_CONFIGURE_OPTIONS="--disable-debug --without-javac" \
+    asdf local erlang 23.0.2 \
+    asdf local elixir 1.10.4-otp-23 \
+    (elixir and erlang versions must match: 23 in this case)
 
 
 
