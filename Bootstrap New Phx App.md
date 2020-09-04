@@ -7,13 +7,18 @@
 
     mix new <appname> --umbrella 
     cd <appname>/apps 
-    mix phx.new <appname> 
+    mix new <appname> 
     mix phx.new.web <appname_web> 
     cd .. 
     git init 
     git commit -am "initial commit"
 
+# Umbrella inter-dep
 
+    Edit your web app mix.exs file to list your other app as a dependency:
+      defp deps do
+        [{:<appname>, in_umbrella: true}]
+      end
 
 # Set Tool Versions with ASDF
 
@@ -104,9 +109,22 @@
 		] 
 	  end
 
+# Set up Dialyzer / Dialyxir
+
+    create `dialyzer.ignore-warnings` in umbrella root dir
+
+    put any dialyzer warnings that you want to ignore inside this file, e.g.:
+
+      :0: Unknown function 'Elixir.ExUnit.Callbacks':'__merge__'/3
+      :0: Unknown function 'Elixir.ExUnit.CaseTemplate':'__proxy__'/2
+
 # Set up ExCoverAlls
 
-    create coveralls.json in root directory of umbrella project:
+    for an umbrella project, add the following to the mix.exs `project` for each app
+        test_coverage: [tool: ExCoveralls]
+
+
+    create `coveralls.json` in umbrella root dir
 
     {
       "skip_files": [
@@ -192,6 +210,107 @@
       * `CHANGELOG`
       * `mix.exs`
 
+# Set up Credo
+
+    run `mix credo.gen.config` in umbrella root
+
+# Set up Drab
+
+    run `mix drab.install` in web application root
+
+    or, if that doesn't work, e.g. if you have a non-standard installation, follow this:
+
+    https://hexdocs.pm/drab/readme.html#manual-installation
+
+# Add Redirect to router.ex 
+
+    alias MyAppWeb.{PageController, Router}
+
+
+    get "/", Router.Redirect, to: "/newpath"
+
+    defmodule Redirect do
+      def init(opts), do: opts
+
+      def call(conn, opts) do
+        conn
+        |> Phoenix.Controller.redirect(opts)
+        |> halt()
+      end
+    end
+
+
+# Useful for controllers
+
+    plug :defaults
+
+    def index(conn, _params) do
+      render(
+        conn,
+        "index.html",
+        page_title: "My Page Title"
+      )
+    end
+
+    defp defaults(conn, _params) do
+      conn
+      |> assign(:search_results, [])
+      |> assign(:links, [])
+      |> assign(:something_else, nil)
+    end
+
+# Update endpoint.ex gzip to be prod only
+
+    plug Plug.Static,
+      at: "/",
+      from: :panarion,
+      gzip: Mix.env() == :prod,
+      only: ~w(css fonts images js favicon.ico robots.txt)
+
+# Set up app for Releases (on-prem server)
+
+    add a `releases` property to your umbrella mix.exs project definition:
+    You only need to mention entry-point applications here.
+       releases: [
+          appname_release: [
+            version: "0.1.0",
+            applications: [app1: :permanent, app2: :permanent]
+          ]
+        ]
+
+
+    Rename /config/prod.secret.exs (build-time, when release is assembled)
+    To: /config/releases.exs (run-time)
+    And update the contenets, here is an example, for deployment with gigalixir:
+
+          import Config
+
+          secret_key_base =
+            System.get_env("SECRET_KEY_BASE") ||
+              raise """
+              environment variable SECRET_KEY_BASE is missing.
+              You can generate one by calling: mix phx.gen.secret
+              """
+
+          config :panarion, PanarionWeb.Endpoint,
+            # http: [port: String.to_integer(System.get_env("PORT") || "4000")],
+            http: [port: {:system, "PORT"}],
+            url: [host: System.get_env("APP_NAME") <> ".gigalixirapp.com", port: 443],
+            secret_key_base: secret_key_base,
+            server: true
+
+
+
+    Update prod.exs
+        change 
+          url host from "example.com" to "localhost"
+
+        add
+          # Do not print debug messages in production
+          config :logger, level: :info
+
+        remove
+          import_config "prod.secret.exs"
 
 # Run Locally
 		cd <appname>/<appname_web> 
@@ -200,6 +319,28 @@
 
 
 # Git Flow
-		git add -A 
-		git commit -m "message" 
-		git log
+    Show commits
+      git log
+
+    Show tags
+      git tag
+    
+    Push changes
+      git status
+      git add -A 
+      git commit -m "message" 
+      git tag -a v1.4 -m "my version 1.4"
+      git push
+
+# Phoenix development workflow
+
+## Controllers
+
+    index - renders a list of all items of the given resource type
+    show - renders an individual item by id
+    new - renders a form for creating a new item
+    create - receives params for one new item and saves it in a datastore
+    edit - retrieves an individual item by id and displays it in a form for editing
+    update - receives params for one edited item and saves it to a datastore
+    delete - receives an id for an item to be deleted and deletes it from a datastore
+
