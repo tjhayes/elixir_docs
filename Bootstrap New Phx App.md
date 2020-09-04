@@ -104,11 +104,93 @@
 		] 
 	  end
 
+# Set up ExCoverAlls
 
+    create coveralls.json in root directory of umbrella project:
 
-# Package Flow
+    {
+      "skip_files": [
+        "deps",
+        "lib/<appname>/application.ex",
+        "lib/<appname>_web/channels/user_socket.ex",
+        "lib/<appname>_web/commanders",
+        "lib/<appname>_web.ex",
+        "lib/<appname>_web/gettext.ex",
+        "lib/<appname>_web/views",
+        "test"
+      ],
+      "coverage_options": {
+        "minimum_coverage": 90,
+        "treat_no_relevant_lines_as_covered": true
+      }
+    }
 
+# Set up .gitignore in root
 
+    # The directory Mix will write compiled artifacts to.
+    /_build/
+
+    # If you run "mix test --cover", coverage assets end up here.
+    /cover/
+
+    # The directory Mix downloads your dependencies sources to.
+    /deps/
+
+    # Where 3rd-party dependencies like ExDoc output generated docs.
+    /doc/
+
+    # Ignore .fetch files in case you like to edit your project deps locally.
+    /.fetch
+
+    # If the VM crashes, it generates a dump, let's ignore it too.
+    erl_crash.dump
+
+    # Also ignore archive artifacts (built via "mix archive.build").
+    *.ez
+
+    # Ignore package tarball (built via "mix hex.build").
+    <appname>-*.tar
+
+    # If NPM crashes, it generates a log, let's ignore it too.
+    npm-debug.log
+
+    # The directory NPM downloads your dependencies sources to.
+    /assets/node_modules/
+
+    # Since we are building assets from assets/,
+    # we ignore priv/static. You may want to comment
+    # this depending on your deployment strategy.
+    /priv/static/
+
+# Set up README.md in root
+
+# Set up CHANGELOG.md in root
+
+    # Changelog
+    All notable changes to this project will be documented in this file.
+
+    The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+    and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+    ## [Unreleased]
+
+# Set up RELEASE.md in root
+
+    # Release Instructions
+
+      1. Bump version in related files below
+      2. Run `mix my.release`, which does the following:
+          * checks format
+          * runs tests & checks coverage
+          * ensures prod env is up-to-date
+          * preps phoenix app for release
+          * creates the release
+      3. Commit, tag and push code
+
+    ## Files with version
+
+      * `CHANGELOG`
+      * `mix.exs`
 
 
 # Run Locally
