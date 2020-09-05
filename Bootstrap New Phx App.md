@@ -3,6 +3,24 @@
     Unix (needed for ASDF. E.G. WSL on Windows)
     ASDF (will install Nodejs, Erlang and Elixir with this)
 
+# Set up dev, build, app env:
+
+    add these 5 lines to the end of your ~/.bashrc:
+      export LC_ALL=en_US.UTF-8
+      export LANG=en_US.UTF-8
+      export LANGUAGE=en_US.UTF-8
+
+      . $HOME/.asdf/asdf.sh
+      . $HOME/.asdf/completions/asdf.bash
+
+    install deps for asdf, elixir, erlang and nodejs (for build env)
+    install asdf
+    install elixir, erlang and nodejs with asdf
+    bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+    install posgresql if needed
+    mix local.hex
+    mix archive.install hex phx_new 1.4.11
+
 # Initial Setup
 
     mix new <appname> --umbrella 
@@ -56,6 +74,8 @@
 			  {:excoveralls, "~> 0.13.1", only: :test} 
 		Web:
 			  {:drab, "~> 0.10.5"},
+    All Child Apps:
+			  {:excoveralls, "~> 0.13.1", only: :test} 
 
 
 		Misc commands: 
@@ -83,29 +103,34 @@
 	  defp aliases do 
 		[ 
 		  "my.format": [ 
-			"format --check-formatted", 
-			"credo --strict" 
+        "format --check-formatted", 
+        "credo --strict" 
 		  ], 
 		  "my.test": [ 
-			"cmd MIX_ENV=test mix coveralls.html", 
-			"cmd MIX_ENV=test mix dialyzer" 
+        "cmd MIX_ENV=test mix coveralls.html", 
+        "cmd MIX_ENV=test mix dialyzer" 
 		  ], 
 		  "my.check": [ 
-			"my.format", 
-			"my.test" 
+        "my.format", 
+        "my.test" 
 		  ], 
 		  "my.phx": [
-			"cmd npm run deploy --prefix ./assets", 
-			"phx.digest.clean", 
-			"phx.digest" 
+        "cmd npm run deploy --prefix ./assets", 
+        "phx.digest.clean", 
+        "phx.digest" 
 		  ],
 		  "my.release": [ 
-			"my.check", 
-			"deps.get --only prod", 
-			"cmd MIX_ENV=prod mix compile", 
-			"my.phx",
-			"cmd MIX_ENV=prod mix release" 
-		  ] 
+        "my.check", 
+        "deps.get --only prod", 
+        "cmd MIX_ENV=prod mix compile", 
+        "my.phx",
+        "cmd MIX_ENV=prod mix release" 
+		  ],
+      "my.run_release": [
+        "cmd export SECRET_KEY_BASE=$(mix phx.gen.secret)",
+        "cmd export PORT=4000",
+        "cmd _build/prod/rel/my_app/bin/my_app start"
+      ]
 		] 
 	  end
 
@@ -124,7 +149,7 @@
         test_coverage: [tool: ExCoveralls]
 
 
-    create `coveralls.json` in umbrella root dir
+    create `coveralls.json` in each app root dir, not the umbrella root dir
 
     {
       "skip_files": [
@@ -240,6 +265,21 @@
     end
 
 
+    and add a controller redirection test:
+
+        test "GET /", %{conn: conn} do
+          conn = get(conn, "/")
+          assert html_response(conn, 302) =~ "redirected"
+        end
+
+# Add core features to main layout: app.html.eex
+
+    add custom stylesheets before your local, e.g. pure-css (https://purecss.io/start/)
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+
+    add a Drab assign for page title: <title><%= @page_title %></title>
+
 # Useful for controllers
 
     plug :defaults
@@ -312,10 +352,30 @@
         remove
           import_config "prod.secret.exs"
 
-# Run Locally
-		cd <appname>/<appname_web> 
-		mix phx.server 
-		iex -S mix phx.server
+# Phoenix development workflow
+
+## Controllers
+
+    index - renders a list of all items of the given resource type
+    show - renders an individual item by id
+    new - renders a form for creating a new item
+    create - receives params for one new item and saves it in a datastore
+    edit - retrieves an individual item by id and displays it in a form for editing
+    update - receives params for one edited item and saves it to a datastore
+    delete - receives an id for an item to be deleted and deletes it from a datastore
+
+
+# Create a Release
+
+    Determine target triple, e.g.: x86_64-linux-gnu, by running gcc -dumpmachine
+
+    Option 1: build on the same server that runs the app (2 machines: Dev, and Build/App)
+    
+        check out the code from git
+        build a release
+        deploy it locally running under systemd.
+  
+        Like dev machine, the build server runs ASDF, using the versions of Erlang and Elixir in .tool-versions
 
 
 # Git Flow
@@ -330,17 +390,11 @@
       git add -A 
       git commit -m "message" 
       git tag -a v1.4 -m "my version 1.4"
-      git push
+      git push origin master --tags
 
-# Phoenix development workflow
 
-## Controllers
-
-    index - renders a list of all items of the given resource type
-    show - renders an individual item by id
-    new - renders a form for creating a new item
-    create - receives params for one new item and saves it in a datastore
-    edit - retrieves an individual item by id and displays it in a form for editing
-    update - receives params for one edited item and saves it to a datastore
-    delete - receives an id for an item to be deleted and deletes it from a datastore
+# Run Locally
+		cd <appname>/<appname_web> 
+		mix phx.server 
+		iex -S mix phx.server
 
