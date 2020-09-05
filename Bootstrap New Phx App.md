@@ -274,8 +274,9 @@
 
 # Add core features to main layout: app.html.eex
 
-    add custom stylesheets before your local, e.g. pure-css (https://purecss.io/start/)
+    add custom stylesheets before your local, e.g. pure-css (https://purecss.io/start/), and also one for pure-css responsive grids:
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/grids-responsive-min.css">
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
 
     add a Drab assign for page title: <title><%= @page_title %></title>
@@ -390,7 +391,9 @@
       git add -A 
       git commit -m "message" 
       git tag -a v1.4 -m "my version 1.4"
-      git push origin master --tags
+      git push -u origin master                    initially to set remote tracking
+      git push --tags                              if you have tags to push
+      git push
 
 
 # Run Locally
