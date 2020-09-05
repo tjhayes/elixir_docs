@@ -372,11 +372,20 @@
 
     Option 1: build on the same server that runs the app (2 machines: Dev, and Build/App)
     
-        check out the code from git
+        check out the code from git source control
+
         build a release
+
+            mix my.release
+
         deploy it locally running under systemd.
+
+            export SECRET_KEY_BASE=$(mix phx.gen.secret)
+            export PORT=4000
+            _build/prod/rel/my_app/bin/my_app start
   
         Like dev machine, the build server runs ASDF, using the versions of Erlang and Elixir in .tool-versions
+
 
 
 # Git Flow
