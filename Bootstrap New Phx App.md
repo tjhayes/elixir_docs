@@ -365,6 +365,10 @@
     update - receives params for one edited item and saves it to a datastore
     delete - receives an id for an item to be deleted and deletes it from a datastore
 
+# Static Assets
+
+    <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+
 
 # Create a Release
 
@@ -406,7 +410,8 @@
 
 
 # Run Locally
-		cd <appname>/<appname_web> 
-		mix phx.server 
-		iex -S mix phx.server
+
+    cd <appname>/<appname_web> 
+    mix phx.server 
+    iex -S mix phx.server
 
