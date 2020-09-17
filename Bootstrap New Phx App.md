@@ -438,7 +438,9 @@
       git push -u origin master                    initially to set remote tracking
       git push --tags                              if you have tags to push
       git push
-
+   
+    Amend Local
+      git commit --amend -m "an updated commit message, adds new local changes to local commit." 
 
 # Run Locally
 
