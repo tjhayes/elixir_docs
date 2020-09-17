@@ -369,6 +369,37 @@
 
     <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
 
+# Install SCSS / SASS
+
+    1) Phoenix 1.4
+    2) Add node-sass and sass-loader to /umbrella/apps/app_web/assets/package.json (devDependencies)
+          "webpack": "4.4.0",
+          "webpack-cli": "^3.3.2",
+          "sass-loader": "7.3.1",
+          "node-sass": "^4.9.0"
+    3) cd /umbrella/apps/app_web/assets
+    4) npm install node-sass sass-loader --save-dev
+    5) rename assets/css/app.css to assets/css/app.scss
+    6) add the sass-loader to the css file section in webpack.config.js and change the extension to .scss
+            -        test: /\.css$/,
+            -        use: [MiniCssExtractPlugin.loader, 'css-loader']
+            +        test: /\.scss$/,
+            +        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+
+            plugins: [
+              new MiniCssExtractPlugin({ filename: '../css/app.css' }), --- this needs to stay as .css!!!
+
+
+    7) change import css from "../css/app.css" to import css from "../css/app.scss" in assets/js/app.js
+
+    8) Template stylesheet needs to stay .css!!!
+
+        <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+          
+              
+          
+
+
 
 # Create a Release
 
