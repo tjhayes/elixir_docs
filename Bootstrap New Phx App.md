@@ -310,12 +310,14 @@
 
 # Set up app for Releases (on-prem server)
 
-    add a `releases` property to your umbrella mix.exs project definition:
+    add a `releases` property to your umbrella mix.exs project definition.
+    You don't need to specify a version. It will use the version # of your umbrella project.
     You only need to mention entry-point applications here.
        releases: [
-          appname_release: [
-            version: "0.1.0",
-            applications: [app1: :permanent, app2: :permanent]
+          release_name: [
+            applications: [app1: :permanent, app2: :permanent],
+            include_executables_for: [:unix],
+            steps: [:assemble, :tar]
           ]
         ]
 
