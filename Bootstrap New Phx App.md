@@ -343,6 +343,26 @@
             server: true
 
 
+    SSL example: 
+    Run `openssl req -new -x509 -nodes -out dev.crt -keyout dev.key` 
+    inside the "priv/ssl" directory to generate dev key and cert.
+    Or put your real ssl certs there, or use an environment variable here to set the path to them.
+
+          config :gocu_web, GocuWeb.Endpoint,
+            http: [port: {:system, "PORT"}],
+            url: [host: "localhost", port: 4443],
+            https: [
+              port: 4443,
+              cipher_suite: :strong,
+              keyfile: "priv/ssl/dev.key",
+              certfile: "priv/ssl/dev.crt"
+            ],
+            secret_key_base: secret_key_base,
+            force_ssl: [hsts: true],
+            server: true
+
+
+
 
     Update prod.exs
         change 
