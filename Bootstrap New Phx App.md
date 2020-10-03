@@ -115,7 +115,7 @@
         "my.test" 
 		  ], 
 		  "my.phx": [
-        "cmd npm run deploy --prefix ./assets", 
+        "cmd npm run deploy --prefix ./apps/<appname_web>/assets", 
         "phx.digest.clean", 
         "phx.digest" 
 		  ],
